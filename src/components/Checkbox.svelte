@@ -23,6 +23,7 @@ before:m-[0.125rem]
 	id="checkboxDefault"
 	on:click={(e) => {
 		if (callback != null) {
+			console.log('call callback');
 			callback(e.target.checked);
 		}
 	}}

@@ -13,7 +13,8 @@
 		level,
 		customCounters,
 		spellSlots,
-		modify
+		modify,
+		skills
 	} from '../global';
 </script>
 
@@ -61,31 +62,23 @@
 				<p class="self-center pt-2 font-semibold">Saving throws</p>
 			</div>
 			<div class="flex flex-col gap-0 p-2 border-2 rounded-lg border-slate-500 text-sm">
-				<Skill skill_name="Acrobatics" />
-				<Skill skill_name="Animal Handling" />
-				<Skill skill_name="Arcana" />
-				<Skill skill_name="Athletics" />
-				<Skill skill_name="Deception" />
-				<Skill skill_name="History" />
-				<Skill skill_name="Insight" />
-				<Skill skill_name="Intimidation" />
-				<Skill skill_name="Investigation" />
-				<Skill skill_name="Medicine" />
-				<Skill skill_name="Nature" />
-				<Skill skill_name="Perception" />
-				<Skill skill_name="Performance" />
-				<Skill skill_name="Persuasion" />
-				<Skill skill_name="Religion" />
-				<Skill skill_name="Sleight of Hand" />
-				<Skill skill_name="Stealth" />
-				<Skill skill_name="Survival" />
+				{#each $skills as skill}
+					<Skill
+						skill_name={skill.name}
+						raw_stat={skill.rawStat}
+						proficient={skill.proficient}
+						callback={() => {
+							skill.proficient = !skill.proficient;
+						}}
+					/>
+				{/each}
 				<p class="self-center pt-2 font-semibold">Skills</p>
 			</div>
 		</div>
 		<div class="flex flex-col w-auto gap-2 m-2">
 			<div class="flex flex-col gap-0 p-2 px-5 border-2 rounded-lg border-slate-500 text-sm">
 				<ul class="font-mono">
-					{#each $spellSlots as spellSlot, spellSlotIndex}
+					{#each $spellSlots as spellSlot}
 						{#if spellSlot.total > 0}
 							<li class="flex gap-1">
 								Level {spellSlot.level + 1}:
@@ -95,9 +88,7 @@
 										className={i == 0 && 'ml-1'}
 										disabled={i != spellSlot.used && i != spellSlot.used - 1}
 										callback={(checked) => {
-											modify(spellSlots, (old) => {
-												old[spellSlotIndex].used += checked ? 1 : -1;
-											});
+											spellSlot.used += checked ? 1 : -1;
 										}}
 									/>
 								{/each}
@@ -107,7 +98,7 @@
 				</ul>
 				<p class="self-center pt-2 font-semibold">Spell slot counter</p>
 			</div>
-			{#each $customCounters as counter, counterIndex}
+			{#each $customCounters as counter}
 				<div class="flex flex-col gap-1 p-2 px-5 border-2 rounded-lg border-slate-500 text-sm">
 					<div class="flex gap-1">
 						{#each { length: counter.total } as _, i}
@@ -115,13 +106,7 @@
 								checked={counter.used > i}
 								disabled={i != counter.used && i != counter.used - 1}
 								callback={(checked) => {
-									modify(
-										customCounters,
-										(old) => {
-											old[counterIndex].used += checked ? 1 : -1;
-										},
-										'displayIndex'
-									);
+									counter.used += checked ? 1 : -1;
 								}}
 							/>
 						{/each}

@@ -23,4 +23,10 @@ export interface SpellSlot {
 	total: number;
 }
 
+export interface Skill {
+	name: string;
+	rawStat: number; // TODO score key?
+	proficient: boolean;
+}
+
 export {};

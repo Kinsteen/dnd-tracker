@@ -2,7 +2,7 @@ import { get } from 'svelte/store';
 import { browser } from '$app/environment';
 import { LocalStorage } from './LocalStorage';
 
-const storage = new LocalStorage();
+export const storage = new LocalStorage();
 
 export const level = storage.createWritable('level', 0);
 
@@ -53,4 +53,40 @@ if (browser) {
 		}
 	}
 	spellSlots.set(slotsArray);
+}
+
+export const skillsData = [
+	{ name: 'Acrobatics', rawStat: get(dexterity) },
+	{ name: 'Animal Handling', rawStat: get(wisdom) },
+	{ name: 'Arcana', rawStat: get(intelligence) },
+	{ name: 'Athletics', rawStat: get(strength) },
+	{ name: 'Deception', rawStat: get(charisma) },
+	{ name: 'History', rawStat: get(intelligence) },
+	{ name: 'Insight', rawStat: get(wisdom) },
+	{ name: 'Intimidation', rawStat: get(charisma) },
+	{ name: 'Investigation', rawStat: get(intelligence) },
+	{ name: 'Medicine', rawStat: get(wisdom) },
+	{ name: 'Nature', rawStat: get(intelligence) },
+	{ name: 'Perception', rawStat: get(wisdom) },
+	{ name: 'Performance', rawStat: get(charisma) },
+	{ name: 'Persuasion', rawStat: get(charisma) },
+	{ name: 'Religion', rawStat: get(intelligence) },
+	{ name: 'Sleight of Hand', rawStat: get(dexterity) },
+	{ name: 'Stealth', rawStat: get(dexterity) },
+	{ name: 'Survival', rawStat: get(wisdom) }
+];
+
+/**
+ * @type {import('svelte/store').Writable<import('./app').Skill[]>}
+ */
+export const skills = storage.createArrayWritable('skill');
+if (browser) {
+	const skillsArray = get(skills).sort((a, b) => a.name.localeCompare(b.name));
+	for (let i = 0; i < skillsData.length; i++) {
+		if (skillsArray.length == i) {
+			skillsArray.push({ ...skillsData[i], proficient: false });
+		}
+		// TODO ?
+	}
+	skills.set(skillsArray);
 }
