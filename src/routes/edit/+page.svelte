@@ -1,6 +1,14 @@
 <script>
 	import '../../app.css';
-	import { customCounters, modify, spellSlots } from '../../global';
+	import {
+		customCounters,
+		modify,
+		spellSlots,
+		hitPoints,
+		maxHitPoints,
+		abilities,
+		proficiencyBonus
+	} from '../../global';
 </script>
 
 <div class="container mx-auto max-w-[48em] flex flex-col">
@@ -64,14 +72,7 @@
 							if (e.key == 'Enter') e.preventDefault();
 						}}
 						on:input={(e) => {
-							// TODO temp name to avoid reordering everytime
-							modify(
-								customCounters,
-								(old) => {
-									old[i].name = e.target.innerText.replace(/\n$/, '');
-								},
-								'displayIndex'
-							);
+							counter.name = e.target.innerText.replace(/\n$/, '');
 						}}
 					>
 						{counter.name}
@@ -80,26 +81,14 @@
 					<button
 						class="border-[1px] border-slate-800 rounded-full w-4 h-4 leading-[0]"
 						on:click={() => {
-							modify(
-								customCounters,
-								(old) => {
-									old[i].total -= 1;
-								},
-								'displayIndex'
-							);
+							counter.total--;
 						}}>-</button
 					>
 					<span class="font-mono">{counter.total}</span>
 					<button
 						class="border-[1px] border-slate-800 rounded-full w-4 h-4 leading-[0]"
 						on:click={() => {
-							modify(
-								customCounters,
-								(old) => {
-									old[i].total += 1;
-								},
-								'displayIndex'
-							);
+							counter.total++;
 						}}>+</button
 					>
 				</div>
@@ -147,22 +136,76 @@
 					Total:
 					<button
 						on:click={() => {
-							modify(spellSlots, (old) => {
-								old[i].total -= 1;
-							});
+							spellSlot.total--;
 						}}>-</button
 					>
 					<span class="mx-0.5 font-mono">{spellSlot.total}</span>
 					<button
 						on:click={() => {
-							modify(spellSlots, (old) => {
-								old[i].total += 1;
-							});
+							spellSlot.total++;
 						}}>+</button
 					>
 				</div>
 			{/each}
 			<p class="self-center pt-2 font-semibold">Spell slots</p>
+		</div>
+
+		<div class="flex flex-col gap-2 p-2 border-2 rounded-lg border-slate-500">
+			<div class="grid grid-cols-2 max-w-64">
+				{#each $abilities as ability}
+					<p>{ability.name}</p>
+					<div class="flex gap-1">
+						<button
+							on:click={() => {
+								ability.value--;
+							}}>-</button
+						>
+						<p class="font-mono">{ability.value.toString().padStart(2, '0')}</p>
+						<button
+							on:click={() => {
+								ability.value++;
+							}}>+</button
+						>
+					</div>
+				{/each}
+			</div>
+			<p class="self-center pt-2 font-semibold">Stats</p>
+		</div>
+		<div class="flex flex-col gap-2 p-2 border-2 rounded-lg border-slate-500">
+			<div class="flex self-center gap-2">
+				<button
+					on:click={() => {
+						$maxHitPoints--;
+					}}>-</button
+				>
+				<span class="mx-0.5 font-mono"
+					>{$hitPoints.toString().padStart(2, '0')}/{$maxHitPoints
+						.toString()
+						.padStart(2, '0')}</span
+				>
+				<button
+					on:click={() => {
+						$maxHitPoints++;
+					}}>+</button
+				>
+			</div>
+			<p class="self-center pt-2 font-semibold">Max hit points</p>
+		</div>
+		<div class="flex flex-col gap-2 p-2 border-2 rounded-lg border-slate-500">
+			<div class="flex self-center gap-2">
+				<button
+					on:click={() => {
+						$proficiencyBonus--;
+					}}>-</button
+				>
+				<span class="mx-0.5 font-mono">{$proficiencyBonus}</span>
+				<button
+					on:click={() => {
+						$proficiencyBonus++;
+					}}>+</button
+				>
+			</div>
+			<p class="self-center pt-2 font-semibold">Proficiency bonus</p>
 		</div>
 	</div>
 </div>

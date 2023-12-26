@@ -4,17 +4,16 @@
 	import Skill from '../components/Skill.svelte';
 	import Checkbox from '../components/Checkbox.svelte';
 	import {
-		constitution,
-		dexterity,
-		strength,
-		intelligence,
-		wisdom,
-		charisma,
 		level,
 		customCounters,
 		spellSlots,
-		modify,
-		skills
+		skills,
+		characterName,
+		hitPoints,
+		maxHitPoints,
+		abilities,
+		proficiencyBonus,
+		bonus
 	} from '../global';
 </script>
 
@@ -22,7 +21,7 @@
 	<a href="/">Home</a>
 	<a href="/edit">Edit</a>
 	<div class="flex w-auto items-center justify-around mt-4">
-		<p class="font-semibold text-5xl p-6 border-2 rounded-lg border-slate-500">Emily Solis</p>
+		<p class="font-semibold text-5xl p-6 border-2 rounded-lg border-slate-500">{$characterName}</p>
 		<div class="grid grid-cols-2 grid-rows-2 gap-2 border-2 rounded-lg border-slate-500">
 			<div class="p-2">Light Cleric</div>
 			<div class="p-2">Samaël</div>
@@ -36,12 +35,9 @@
 	</div>
 	<div class="flex">
 		<div class="flex flex-col w-28 gap-2 m-2">
-			<PrimaryStat stat_name="Strength" stat_value={$strength} />
-			<PrimaryStat stat_name="Dexterity" stat_value={$dexterity} />
-			<PrimaryStat stat_name="Constitution" stat_value={$constitution} />
-			<PrimaryStat stat_name="Intelligence" stat_value={$intelligence} />
-			<PrimaryStat stat_name="Wisdom" stat_value={$wisdom} />
-			<PrimaryStat stat_name="Charisma" stat_value={$charisma} />
+			{#each $abilities as ability}
+				<PrimaryStat stat_name={ability.name} stat_value={ability.value} />
+			{/each}
 		</div>
 		<div class="flex flex-col gap-2 m-2">
 			<div class="flex gap-2 p-2 border-2 rounded-lg border-slate-500 text-sm">
@@ -49,16 +45,24 @@
 				Inspiration
 			</div>
 			<div class="flex gap-2 p-2 border-2 rounded-lg border-slate-500 text-sm">
-				<p>+2</p>
+				<p>+{$proficiencyBonus}</p>
 				Proficiency bonus
 			</div>
 			<div class="flex flex-col gap-0 p-2 border-2 rounded-lg border-slate-500 text-sm">
-				<span>+1 Strength</span>
-				<span>+1 Dexterity</span>
-				<span>+1 Constitution</span>
-				<span>+1 Intelligence</span>
-				<span>+1 Wisdom</span>
-				<span>+1 Charisma</span>
+				{#each $abilities as ability}
+					<div class="flex items-center gap-1">
+						<Checkbox
+							checked={ability.proficient}
+							callback={() => {
+								ability.proficient = !ability.proficient;
+							}}
+						/>
+						<span class="font-mono"
+							>{bonus(ability.value, ability.proficient, parseInt($proficiencyBonus))}</span
+						>
+						{ability.name}
+					</div>
+				{/each}
 				<p class="self-center pt-2 font-semibold">Saving throws</p>
 			</div>
 			<div class="flex flex-col gap-0 p-2 border-2 rounded-lg border-slate-500 text-sm">
@@ -76,6 +80,25 @@
 			</div>
 		</div>
 		<div class="flex flex-col w-auto gap-2 m-2">
+			<div class="flex flex-col gap-0 p-2 px-5 border-2 rounded-lg border-slate-500 text-sm">
+				<div class="flex self-center gap-2">
+					<button
+						on:click={() => {
+							$hitPoints--;
+						}}>-</button
+					>
+					<span class="mx-0.5 font-mono">
+						{$hitPoints.toString().padStart(2, '0')}/{$maxHitPoints.toString().padStart(2, '0')}
+					</span>
+					<button
+						on:click={() => {
+							$hitPoints++;
+						}}>+</button
+					>
+				</div>
+
+				<p class="self-center pt-2 font-semibold">Hit points</p>
+			</div>
 			<div class="flex flex-col gap-0 p-2 px-5 border-2 rounded-lg border-slate-500 text-sm">
 				<ul class="font-mono">
 					{#each $spellSlots as spellSlot}
